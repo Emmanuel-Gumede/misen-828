@@ -7,6 +7,8 @@ const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 app.engine("hbs", exphbs({ defaultLayout: "main", extname: "hbs" }));
 app.set("view engine", "hbs");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
 	return res.render("login", {
@@ -17,13 +19,32 @@ app.get("/", (req, res) => {
 });
 
 app.get("/home", (req, res) => {
-	let groups = ["m000a", "m001a", "m002a", "m003a", "m004a", "m005a"];
+	let groupNames = ["m000a", "m001a", "m002a", "m003a", "m004a", "m005a"];
+	let drawData = [
+		{
+			drawSeq: 1,
+			drawDate: "2020-04-21",
+			drawNo: 8871,
+			drawBalls: [2, 17, 24, 31, 42, 45],
+			drawBonus: 13,
+		},
+	];
 	return res.render("home", {
 		title: "Misen Player | Home",
 		style: "./styles/group.css",
 		template: "home-template",
-		groups,
+		drawData,
+		groups: groupNames,
 	});
+});
+
+app.post("/draw", (req, res) => {
+	let drawNumbers = req.body.drawNumbers.split(",").map(Number);
+	let bonusNumber = drawNumbers.pop();
+	let newDraw = { drawDate: req.body.drawDate, drawNumbers: drawNumbers, bonusNumber: bonusNumber };
+	console.log(newDraw);
+
+	return res.redirect("/home");
 });
 
 app.get("/home/:group", (req, res) => {

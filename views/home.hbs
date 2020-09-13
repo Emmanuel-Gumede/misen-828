@@ -1,5 +1,44 @@
+<div class="nav-wrapper">
+    <div class="main-logo">
+        <img src="../images/logo.png" alt="LOGO">
+    </div>
+    <div class="nav-menu">
+        <h2>Play SA Lotto with Misen Groups</h2>
+    </div>
+    <div class="logout-btn">
+        <a href="/">
+            <div>LOGOUT</div>
+        </a>
+    </div>
+</div>
 <div class="homeview-wrapper">
-    <div id="draw-history"></div>
+    <div id="draw-control">
+        <div id="new-draw">
+            <form action="/draw" method="POST">
+                <input id="new-draw-date" type="date" name="drawDate">
+                <input id="new-draw-numbers" type="text" name="drawNumbers" placeholder="New Draw Numbers">
+                <button>ADD NEW DRAW</button>
+            </form>
+        </div>
+        <div id="draw-history">
+            <table id="draw-history-data">
+                <th style="width: 3rem;">Game<br />No.</th>
+                <th style="width: 6rem;">Draw Date</th>
+                <th style="width: 3rem;">Draw<br />No.</th>
+                <th style="width: 8rem;">Draw Numbers</th>
+                <th style="width: 3rem;">Bonus</th>
+                {{#each drawData}}
+                <tr>
+                    <td> {{this.drawSeq}} </td>
+                    <td> {{this.drawDate}} </td>
+                    <td> {{this.drawNo}} </td>
+                    <td> {{this.drawBalls}} </td>
+                    <td> {{this.drawBonus}} </td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+    </div>
     <div id="view-control">
         {{#each groups}}
         <a href="/home/{{{this}}}">

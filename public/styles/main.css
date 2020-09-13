@@ -12,6 +12,10 @@ a {
 	text-decoration-line: none;
 }
 
+button {
+	cursor: pointer;
+}
+
 .login-template {
 	background-color: aqua;
 }
