@@ -1,0 +1,17 @@
+<div class="homeview-wrapper">
+    <div id="draw-history"></div>
+    <div id="view-control">
+        {{#each groups}}
+        <a href="/home/{{{this}}}">
+            <div class="group-link">
+                <h1> {{this}} </h1>
+                <div class="group-info">
+                    <div>Last updated: <span>2020-09-12</span></div>
+                    <div>Last Trained: <span>2020-09-04</span></div>
+                    <div>Error Rate: <span>0.0124054337</span></div>
+                </div>
+            </div>
+        </a>
+        {{/each}}
+    </div>
+</div>

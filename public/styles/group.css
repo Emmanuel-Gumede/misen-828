@@ -1,0 +1,110 @@
+.homeview-wrapper,
+.groupview-wrapper {
+	display: flex;
+	width: 100%;
+}
+
+.group-info {
+	position: absolute;
+	bottom: 0.5rem;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: space-around;
+	width: 98%;
+}
+
+.group-info div {
+	padding: 0.2rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.group-info span {
+	font-weight: 400;
+	color: #ff0000;
+}
+
+#draw-history {
+	width: 30%;
+	max-height: 90vh;
+}
+
+#view-control {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	width: 70%;
+}
+
+#view-control a {
+	width: 50%;
+	text-decoration-line: none;
+}
+
+#view-control .group-link {
+	position: relative;
+	height: 12rem;
+	background-color: #c2bdbd;
+	margin: 0.25rem;
+	padding: 0.5rem;
+	border: 1px solid #000000;
+	border-radius: 0.5rem;
+}
+
+#view-control h1 {
+	text-transform: uppercase;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+#view-control div:hover {
+	background-color: burlywood;
+}
+
+#group-metadata {
+	width: 30%;
+	height: 90vh;
+	margin: 1rem;
+}
+
+#group-content {
+	width: 100%;
+	height: 75vh;
+}
+
+#group-metadata h1 {
+	text-transform: uppercase;
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.close-btn {
+	width: 12rem;
+	height: 2rem;
+	font-weight: 600;
+	background-color: #00ff00;
+	margin-left: 8rem;
+	padding: 0.5rem 4rem;
+}
+
+#group-display {
+	width: 70%;
+	height: 90vh;
+	margin: 1rem;
+	border: 1px solid #000000;
+	padding: 0.5rem;
+	justify-content: center;
+}
+
+#group-display button {
+	width: 9.5rem;
+	height: 2rem;
+	margin: 0 2rem;
+	font-weight: 600;
+	background-color: #00ff00;
+}
+
+#group-datatable {
+	width: 100%;
+	height: 83vh;
+}
