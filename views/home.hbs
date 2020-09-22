@@ -29,28 +29,44 @@
                 <th style="width: 3rem;">Bonus</th>
                 {{#each drawData}}
                 <tr>
-                    <td> {{this.drawSeq}} </td>
+                    <td> {{this.gameNumber}} </td>
                     <td> {{this.drawDate}} </td>
-                    <td> {{this.drawNo}} </td>
-                    <td> {{this.drawBalls}} </td>
-                    <td> {{this.drawBonus}} </td>
+                    <td> {{this.drawNumber}} </td>
+                    <td> {{this.drawNumbers}} </td>
+                    <td> {{this.bonusNumber}} </td>
                 </tr>
                 {{/each}}
             </table>
         </div>
     </div>
-    <div id="view-control">
-        {{#each groups}}
-        <a href="/home/{{{this}}}">
-            <div class="group-link">
-                <h1> {{this}} </h1>
-                <div class="group-info">
-                    <div>Last updated: <span>2020-09-12</span></div>
-                    <div>Last Trained: <span>2020-09-04</span></div>
-                    <div>Error Rate: <span>0.0124054337</span></div>
+    <div class="groupmain-display">
+        <div class="grouptab" id="grouptab-A">
+            {{#each groupList}}
+            <a href="/home/{{{this}}}">
+                <div class="group-link">
+                    <h1> {{this}} </h1>
+                    <div class="group-info">
+                        <div>Last updated: <span>2020-09-12</span></div>
+                        <div>Last Trained: <span>2020-09-04</span></div>
+                        <div>Error Rate: <span>0.0124054337</span></div>
+                    </div>
                 </div>
-            </div>
-        </a>
-        {{/each}}
+            </a>
+            {{/each}}
+        </div>
+        <div class="grouptab" id="grouptab-B">
+            {{#each groupList}}
+            <a href="/home/{{{this}}}">
+                <div class="group-link">
+                    <h1> {{this}} </h1>
+                    <div class="group-info">
+                        <div>Last updated: <span>2020-09-12</span></div>
+                        <div>Last Trained: <span>2020-09-04</span></div>
+                        <div>Error Rate: <span>0.0124054337</span></div>
+                    </div>
+                </div>
+            </a>
+            {{/each}}
+        </div>
     </div>
 </div>

@@ -59,10 +59,18 @@ table td {
 	padding: 1.2rem 2rem;
 }
 
-.homeview-wrapper,
+.homeview-wrapper {
+	display: flex;
+	width: 100%;
+}
+
 .groupview-wrapper {
 	display: flex;
 	width: 100%;
+}
+
+.groupmain-display {
+	width: 70%;
 }
 
 .group-info {
@@ -138,21 +146,22 @@ table td {
 	padding: 0.5rem;
 }
 
-#view-control {
+#grouptab-A {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
-	width: 70%;
+	width: 100%;
+	padding-right: 0.5rem;
 }
 
-#view-control a {
+.grouptab a {
 	width: 50%;
 	text-decoration-line: none;
 }
 
-#view-control .group-link {
+.group-link {
 	position: relative;
-	height: 12rem;
+	height: 10rem;
 	background-color: #c2bdbd;
 	margin: 0.25rem;
 	padding: 0.5rem;
@@ -160,13 +169,13 @@ table td {
 	border-radius: 0.5rem;
 }
 
-#view-control h1 {
+.grouptab h1 {
 	text-transform: uppercase;
 	text-align: center;
 	margin-bottom: 2rem;
 }
 
-#view-control div:hover {
+.grouptab div:hover {
 	background-color: burlywood;
 }
 
@@ -216,4 +225,8 @@ table td {
 #group-datatable {
 	width: 100%;
 	height: 83vh;
+}
+
+#grouptab-B {
+	display: none;
 }

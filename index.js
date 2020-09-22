@@ -1,5 +1,6 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
+const router = require("./routes/index");
 const path = require("path");
 
 const app = express();
@@ -18,45 +19,7 @@ app.get("/", (req, res) => {
 	});
 });
 
-app.get("/home", (req, res) => {
-	let groupNames = ["m000a", "m001a", "m002a", "m003a", "m004a", "m005a"];
-	let drawData = [
-		{
-			drawSeq: 1,
-			drawDate: "2020-04-21",
-			drawNo: 8871,
-			drawBalls: [2, 17, 24, 31, 42, 45],
-			drawBonus: 13,
-		},
-	];
-	return res.render("home", {
-		title: "Misen Player | Home",
-		style: "./styles/group.css",
-		template: "home-template",
-		drawData,
-		groups: groupNames,
-	});
-});
-
-app.post("/draw", (req, res) => {
-	let drawNumbers = req.body.drawNumbers.split(",").map(Number);
-	let bonusNumber = drawNumbers.pop();
-	let newDraw = { drawDate: req.body.drawDate, drawNumbers: drawNumbers, bonusNumber: bonusNumber };
-	console.log(newDraw);
-
-	return res.redirect("/home");
-});
-
-app.get("/home/:group", (req, res) => {
-	let groupName = req.params.group;
-	return res.render("group", {
-		title: "Misen Player | Group",
-		style: "../styles/group.css",
-		template: "home-template",
-		group: groupName,
-	});
-});
-
+app.use("/", router);
 app.listen(4040, () => {
 	console.log("Express application server running on port 4040 (http://127.0.0.1:4040)");
 });
