@@ -11,7 +11,6 @@ const drawSchema = new Schema({
 	drawDate: String,
 	drawNumbers: Array,
 	bonusNumber: Number,
-	fullDraw: Array,
 });
 
 const groupSchema = new Schema({
@@ -22,20 +21,26 @@ const groupSchema = new Schema({
 	trainingError: Number,
 });
 
-const gameSchema = new Schema({
-	gamePlay: Number, //number of games being tracked, e.g. 1 = previous 1 game
-	ballRanks: Array, //[rank: ball]
+const scoreSchema = new Schema({
+	gameNumber: Number,
+	groupScores: Array,
+});
+
+const playSchema = new Schema({
+	gameNumber: Number,
+	groupNumbers: Array,
 });
 
 const Draw = mongoose.model("Draw", drawSchema);
 const Group = mongoose.model("Group", groupSchema);
-const Game = mongoose.model("Game", gameSchema);
+const Score = mongoose.model("Score", scoreSchema);
+const Play = mongoose.model("Play", playSchema);
 
-exports.getBallWeights = () => {
+exports.ballWeights = () => {
 	return JSON.parse(fs.readFileSync("./model/ballWeights.json", "utf-8"));
 };
 
-exports.getPlayBalls = () => {
+exports.playBalls = () => {
 	return JSON.parse(fs.readFileSync("./model/playBalls.json", "utf-8"));
 };
 
@@ -61,6 +66,29 @@ exports.addNewDraw = async (draw) => {
 	});
 };
 
+exports.addNewScore = async (scores) => {
+	let newScores = new Score(scores);
+	await newScores.save((err, result) => {
+		if (err) console.log(`New scores were not added due to ${err}`);
+		if (result) console.log(`New scores have been added`);
+	});
+};
+
+exports.updatePlayGroups = async (plays) => {
+	let playNumbers = new Play(plays);
+	await playNumbers.save((err, result) => {
+		if (err) console.log(`Play groups not updated due to ${err}`);
+		if (result) console.log("Play numbers updated");
+	});
+};
+
+exports.getPlayNumbers = async () => {
+	return await Play.find({})
+		.sort({ gameNumber: -1 })
+		.limit(1)
+		.then((group) => group[0].groupNumbers[0]);
+};
+
 exports.addNewGroup = async (group) => {
 	let newGroup = new Group(group);
 	await newGroup.save((err, result) => {
@@ -71,6 +99,12 @@ exports.addNewGroup = async (group) => {
 
 exports.drawHistory = async () => {
 	return await Draw.find({}, { fullDraw: 0 }).lean();
+};
+
+exports.getScores = async () => {
+	return await Score.find({}).then((scores) => {
+		scores.forEach((elem) => console.log(elem.groupScores[0]));
+	});
 };
 
 exports.groupNames = async () => {
