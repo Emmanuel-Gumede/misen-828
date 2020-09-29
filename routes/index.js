@@ -5,36 +5,28 @@ const model = require("../model/index.js");
 let newScores = async (req, res, next) => {
 	let drawNumbers = req.body.drawNumbers.split(",").map(Number);
 	let playNumbers = await model.getPlayNumbers();
-	let groupList = await model.groupNames();
-	let newGameNumber = (await model.lastGameNumber()) + 1;
-	let groupScore = {};
 
-	for (let g = 0; g < groupList.length; g++) {
+	for (let g = 0; g < playNumbers.length; g++) {
 		let winGroup = [];
 		let winGroupI = [];
-		for (let j = 0; j < playNumbers[groupList[g]].length; j++) {
+		for (let j = 0; j < playNumbers[g].groupNumbers.length; j++) {
 			let matchCount = 0;
 			for (let i = 0; i < drawNumbers.length; i++) {
-				if (playNumbers[groupList[g]][j].includes(drawNumbers[i])) {
+				if (playNumbers[g].groupNumbers[j].includes(drawNumbers[i])) {
 					matchCount++;
 				}
 			}
 			if (matchCount >= 3) {
 				winGroup.push(1);
-				winGroupI.push(playNumbers[groupList[g]].indexOf(playNumbers[groupList[g]][j]) + 1);
+				winGroupI.push(playNumbers[g].groupNumbers.indexOf(playNumbers[g].groupNumbers[j]) + 1);
 			} else {
 				winGroup.push(0);
 			}
 		}
 		if (winGroupI.length === 0) winGroupI.push(0);
-		if (groupScore[groupList[g]] === undefined) groupScore[groupList[g]] = {};
-		groupScore[groupList[g]] = winGroupI;
+		await model.addNewScore(playNumbers[g].groupName, winGroupI);
+		console.log(`Added score for ${playNumbers[g].groupName} = ${winGroupI}`);
 	}
-	let playScores = {
-		gameNumber: newGameNumber,
-		groupScores: groupScore,
-	};
-	await model.addNewScore(playScores);
 	next();
 };
 
@@ -80,9 +72,10 @@ let newGroup = async (req, res, next) => {
 };
 
 router.get("/home", async (req, res) => {
+	await model.initData();
 	let drawData = await model.drawHistory();
 	let groupList = await model.groupNames();
-	await model.getScores();
+
 	drawData.reverse();
 	return res.render("home", {
 		title: "Misen Player | Home",
@@ -94,13 +87,8 @@ router.get("/home", async (req, res) => {
 });
 
 router.post("/draw", [newScores, newDraw, newGroup], async (req, res) => {
-	let players = await makeGroups();
-	let nextGame = (await model.lastGameNumber()) + 1;
-	let playGroups = {
-		gameNumber: nextGame,
-		groupNumbers: players,
-	};
-	await model.updatePlayGroups(playGroups);
+	await makeGroups();
+
 	return res.redirect("/home");
 });
 
@@ -117,9 +105,8 @@ router.get("/home/:group", (req, res) => {
 async function makeGroups() {
 	let games = await model.lastGameNumber();
 	let groupList = await model.groupNames();
-	let groups = {};
 
-	for (let i = 0; i < games; i++) {
+	for (let i = 0; i < games + 1; i++) {
 		let rank = await ballRank(i);
 		let groupA = [rank[0], rank[1], rank[2], rank[3]];
 		let groupB = [rank[4], rank[5], rank[6], rank[7]];
@@ -162,9 +149,8 @@ async function makeGroups() {
 			masterAG12.sort((a, b) => a - b),
 			masterAG13.sort((a, b) => a - b),
 		];
-		groups[groupList[i]] = allGroups;
+		await model.updatePlayNumbers(groupList[i], allGroups);
 	}
-	return groups;
 }
 
 async function ballFrequency(ball, draws) {

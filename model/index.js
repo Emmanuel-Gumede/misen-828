@@ -1,7 +1,11 @@
 const fs = require("fs");
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://localhost/misen-player", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb://localhost/misen-test8", {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useFindAndModify: false,
+});
 
 const Schema = mongoose.Schema;
 
@@ -22,12 +26,12 @@ const groupSchema = new Schema({
 });
 
 const scoreSchema = new Schema({
-	gameNumber: Number,
-	groupScores: Array,
+	groupName: String,
+	groupScore: Array,
 });
 
 const playSchema = new Schema({
-	gameNumber: Number,
+	groupName: String,
 	groupNumbers: Array,
 });
 
@@ -35,6 +39,56 @@ const Draw = mongoose.model("Draw", drawSchema);
 const Group = mongoose.model("Group", groupSchema);
 const Score = mongoose.model("Score", scoreSchema);
 const Play = mongoose.model("Play", playSchema);
+
+exports.initData = async () => {
+	let groupData = await Group.find({}).exec();
+	let drawData = await Draw.find({}).exec();
+	let playData = await Play.find({}).exec();
+
+	if (groupData.length !== 0) {
+		return;
+	} else {
+		let initGroup = { groupName: "m0000a", gamePlay: 0 };
+		let group = new Group(initGroup);
+		await group.save();
+	}
+
+	if (drawData.length !== 0) {
+		return;
+	} else {
+		let initDraw = {
+			gameNumber: 0,
+			drawNumber: 1731,
+		};
+		let draw = new Draw(initDraw);
+		await draw.save();
+	}
+
+	if (playData.length !== 0) {
+		return;
+	} else {
+		let initPlay = {
+			groupName: "m0000a",
+			groupNumbers: [
+				[1, 2, 3, 4, 5, 6, 7, 8],
+				[5, 6, 7, 8, 9, 10, 11, 12],
+				[9, 10, 11, 12, 13, 14, 15, 16],
+				[13, 14, 15, 16, 17, 18, 19, 20],
+				[17, 18, 19, 20, 21, 22, 23, 24],
+				[21, 22, 23, 24, 25, 26, 27, 28],
+				[25, 26, 27, 28, 29, 30, 31, 32],
+				[29, 30, 31, 32, 33, 34, 35, 36],
+				[33, 34, 35, 36, 37, 38, 39, 40],
+				[37, 38, 39, 40, 41, 42, 43, 44],
+				[41, 42, 43, 44, 45, 46, 47, 48],
+				[45, 46, 47, 48, 49, 50, 51, 52],
+				[49, 50, 51, 52, 1, 2, 3, 4],
+			],
+		};
+		let play = new Play(initPlay);
+		await play.save();
+	}
+};
 
 exports.ballWeights = () => {
 	return JSON.parse(fs.readFileSync("./model/ballWeights.json", "utf-8"));
@@ -58,6 +112,10 @@ exports.lastDrawNumber = async () => {
 		.then((draws) => draws[0].drawNumber);
 };
 
+exports.updatePlayNumbers = async (group, numbers) => {
+	return await Play.findOneAndUpdate({ groupName: group }, { groupNumbers: numbers }, { new: true, upsert: true });
+};
+
 exports.addNewDraw = async (draw) => {
 	let newDraw = new Draw(draw);
 	await newDraw.save((err, result) => {
@@ -66,12 +124,12 @@ exports.addNewDraw = async (draw) => {
 	});
 };
 
-exports.addNewScore = async (scores) => {
-	let newScores = new Score(scores);
-	await newScores.save((err, result) => {
-		if (err) console.log(`New scores were not added due to ${err}`);
-		if (result) console.log(`New scores have been added`);
-	});
+exports.addNewScore = async (group, score) => {
+	return await Score.findOneAndUpdate(
+		{ groupName: group },
+		{ $push: { groupScore: { $each: [score], $position: 0 } } },
+		{ new: true, upsert: true }
+	);
 };
 
 exports.updatePlayGroups = async (plays) => {
@@ -83,10 +141,11 @@ exports.updatePlayGroups = async (plays) => {
 };
 
 exports.getPlayNumbers = async () => {
-	return await Play.find({})
-		.sort({ gameNumber: -1 })
-		.limit(1)
-		.then((group) => group[0].groupNumbers[0]);
+	return await Play.find({});
+};
+
+exports.getPlayNumbersGroup = async (group) => {
+	return await Play.find({ groupName: group });
 };
 
 exports.addNewGroup = async (group) => {
@@ -101,10 +160,8 @@ exports.drawHistory = async () => {
 	return await Draw.find({}, { fullDraw: 0 }).lean();
 };
 
-exports.getScores = async () => {
-	return await Score.find({}).then((scores) => {
-		scores.forEach((elem) => console.log(elem.groupScores[0]));
-	});
+exports.getScores = async (group) => {
+	return await Score.find({ groupName: group }).exec();
 };
 
 exports.groupNames = async () => {
