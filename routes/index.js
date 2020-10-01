@@ -75,7 +75,7 @@ router.get("/home", async (req, res) => {
 	await model.initData();
 	let drawData = await model.drawHistory();
 	let groupList = await model.groupNames();
-
+	//await model.deleteGame(0);
 	drawData.reverse();
 	return res.render("home", {
 		title: "Misen Player | Home",
@@ -87,7 +87,31 @@ router.get("/home", async (req, res) => {
 });
 
 router.post("/draw", [newScores, newDraw, newGroup], async (req, res) => {
-	await makeGroups();
+	let games = await model.lastGameNumber();
+	let groupList = await model.groupNames();
+
+	for (let i = 0; i < games + 1; i++) {
+		let rank = await ballRank(i);
+		let playGroup = [];
+		let subGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"];
+		let groupEnd = 0;
+		let groupInt = 4;
+
+		for (let s = 0; s < subGroups.length; s++) {
+			groupEnd = groupEnd + 4;
+			subGroups[s] = rank.slice(s * groupInt, groupEnd);
+		}
+
+		for (let p = 0; p < subGroups.length; p++) {
+			if (subGroups[p + 1] !== undefined) {
+				playGroup.push(subGroups[p].concat(subGroups[p + 1]).sort((a, b) => a - b));
+			} else {
+				playGroup.push(subGroups[p].concat(subGroups[0]).sort((a, b) => a - b));
+			}
+		}
+
+		await model.updatePlayNumbers(groupList[i], playGroup);
+	}
 
 	return res.redirect("/home");
 });
@@ -102,60 +126,8 @@ router.get("/home/:group", (req, res) => {
 	});
 });
 
-async function makeGroups() {
-	let games = await model.lastGameNumber();
-	let groupList = await model.groupNames();
-
-	for (let i = 0; i < games + 1; i++) {
-		let rank = await ballRank(i);
-		let groupA = [rank[0], rank[1], rank[2], rank[3]];
-		let groupB = [rank[4], rank[5], rank[6], rank[7]];
-		let groupC = [rank[8], rank[9], rank[10], rank[11]];
-		let groupD = [rank[12], rank[13], rank[14], rank[15]];
-		let groupE = [rank[16], rank[17], rank[18], rank[19]];
-		let groupF = [rank[20], rank[21], rank[22], rank[23]];
-		let groupG = [rank[24], rank[25], rank[26], rank[27]];
-		let groupH = [rank[28], rank[29], rank[30], rank[31]];
-		let groupI = [rank[32], rank[33], rank[34], rank[35]];
-		let groupJ = [rank[36], rank[37], rank[38], rank[39]];
-		let groupK = [rank[40], rank[41], rank[42], rank[43]];
-		let groupL = [rank[44], rank[45], rank[46], rank[47]];
-		let groupM = [rank[48], rank[49], rank[50], rank[51]];
-		let masterAG1 = groupA.concat(groupB);
-		let masterAG2 = groupB.concat(groupC);
-		let masterAG3 = groupC.concat(groupD);
-		let masterAG4 = groupD.concat(groupE);
-		let masterAG5 = groupE.concat(groupF);
-		let masterAG6 = groupF.concat(groupG);
-		let masterAG7 = groupG.concat(groupH);
-		let masterAG8 = groupH.concat(groupI);
-		let masterAG9 = groupI.concat(groupJ);
-		let masterAG10 = groupJ.concat(groupK);
-		let masterAG11 = groupK.concat(groupL);
-		let masterAG12 = groupL.concat(groupM);
-		let masterAG13 = groupM.concat(groupA);
-		let allGroups = [
-			masterAG1.sort((a, b) => a - b),
-			masterAG2.sort((a, b) => a - b),
-			masterAG3.sort((a, b) => a - b),
-			masterAG4.sort((a, b) => a - b),
-			masterAG5.sort((a, b) => a - b),
-			masterAG6.sort((a, b) => a - b),
-			masterAG7.sort((a, b) => a - b),
-			masterAG8.sort((a, b) => a - b),
-			masterAG9.sort((a, b) => a - b),
-			masterAG10.sort((a, b) => a - b),
-			masterAG11.sort((a, b) => a - b),
-			masterAG12.sort((a, b) => a - b),
-			masterAG13.sort((a, b) => a - b),
-		];
-		await model.updatePlayNumbers(groupList[i], allGroups);
-	}
-}
-
 async function ballFrequency(ball, draws) {
 	let drawData = await model.drawHistory();
-	//drawData.reverse();
 	let drawList = [];
 
 	for (let i = 0; i < drawData.length; i++) {
