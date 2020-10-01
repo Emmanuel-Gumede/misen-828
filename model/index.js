@@ -48,7 +48,7 @@ exports.initData = async () => {
 	if (groupData.length !== 0) {
 		return;
 	} else {
-		let initGroup = { groupName: "m0000a", gamePlay: 0 };
+		let initGroup = { groupName: "m0000", gamePlay: 0 };
 		let group = new Group(initGroup);
 		await group.save();
 	}
@@ -67,24 +67,35 @@ exports.initData = async () => {
 	if (playData.length !== 0) {
 		return;
 	} else {
+		let playBalls = [];
+
+		for (let i = 1; i < 53; i++) {
+			playBalls.push(i);
+		}
+
+		let playGroup = [];
+		let subGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"];
+		let groupEnd = 0;
+		let groupInt = 4;
+
+		for (let s = 0; s < subGroups.length; s++) {
+			groupEnd = groupEnd + 4;
+			subGroups[s] = rank.slice(s * groupInt, groupEnd).sort((a, b) => a - b);
+		}
+
+		for (let p = 0; p < subGroups.length; p++) {
+			if (subGroups[p + 1] !== undefined) {
+				playGroup.push(subGroups[p].concat(subGroups[p + 1]).sort((a, b) => a - b));
+			} else {
+				playGroup.push(subGroups[p].concat(subGroups[0]).sort((a, b) => a - b));
+			}
+		}
+
 		let initPlay = {
 			groupName: "m0000a",
-			groupNumbers: [
-				[1, 2, 3, 4, 5, 6, 7, 8],
-				[5, 6, 7, 8, 9, 10, 11, 12],
-				[9, 10, 11, 12, 13, 14, 15, 16],
-				[13, 14, 15, 16, 17, 18, 19, 20],
-				[17, 18, 19, 20, 21, 22, 23, 24],
-				[21, 22, 23, 24, 25, 26, 27, 28],
-				[25, 26, 27, 28, 29, 30, 31, 32],
-				[29, 30, 31, 32, 33, 34, 35, 36],
-				[33, 34, 35, 36, 37, 38, 39, 40],
-				[37, 38, 39, 40, 41, 42, 43, 44],
-				[41, 42, 43, 44, 45, 46, 47, 48],
-				[45, 46, 47, 48, 49, 50, 51, 52],
-				[49, 50, 51, 52, 1, 2, 3, 4],
-			],
+			groupNumbers: playGroup,
 		};
+
 		let play = new Play(initPlay);
 		await play.save();
 	}
@@ -138,6 +149,10 @@ exports.updatePlayGroups = async (plays) => {
 		if (err) console.log(`Play groups not updated due to ${err}`);
 		if (result) console.log("Play numbers updated");
 	});
+};
+
+exports.deleteGame = async (game) => {
+	return await Draw.findOneAndDelete({ gameNumber: game });
 };
 
 exports.getPlayNumbers = async () => {
