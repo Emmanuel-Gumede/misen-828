@@ -1,3 +1,7 @@
+body {
+	background-image: url("../images/lottoimg2.jpg");
+}
+
 table {
 	max-width: 100%;
 	font-size: smaller;
@@ -5,7 +9,7 @@ table {
 }
 
 table th {
-	background-color: #000000;
+	background-color: #ff0000;
 	color: #ffffff;
 	text-align: left;
 	height: 1.5rem;
@@ -13,9 +17,12 @@ table th {
 }
 
 table td {
-	/*border: 1px solid white;*/
+	border: 1px solid #000000;
 	background-color: #ffc300;
-	padding-left: 0.2rem;
+	height: 1.3rem;
+	align-items: center;
+	padding-left: 0.1rem;
+	padding-right: 0.1rem;
 }
 
 .nav-wrapper {
@@ -34,16 +41,63 @@ table td {
 }
 
 .nav-menu {
+	display: flex;
 	width: 76%;
-	text-align: center;
-	padding: 0 1rem;
+	height: 3.5rem;
+	justify-content: space-between;
+	border: 1px solid #000000;
+	background-color: aqua;
+	border-radius: 0.5rem;
+	margin-right: 1rem;
+	padding: 0.2rem;
 }
 
 .nav-menu h2 {
-	border: 1px solid #000000;
-	border-radius: 0.5rem;
-	background-color: aqua;
-	padding: 0.75rem;
+	width: 55%;
+	font-size: 2rem;
+	margin: 0.3rem;
+}
+
+.lastDraw {
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: 50%;
+	background-color: #ffc300;
+	margin-right: 0.5rem;
+	padding: 0.35rem;
+}
+
+.lastBonus {
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: 50%;
+	background-color: #532ddd;
+	margin: 0 0.5rem;
+	padding: 0.35rem;
+}
+
+.ball-inner {
+	width: 2rem;
+	height: 2rem;
+	background-color: #000000;
+	border-radius: 50%;
+	border: 4px solid #ffffff;
+	text-align: center;
+	color: #ffffff;
+	padding-top: 0.25rem;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.lastBonus-title {
+	font-weight: 600;
+	margin-top: 0.8rem;
+}
+
+.recent-results {
+	width: 45%;
+	display: flex;
+	justify-content: center;
 }
 
 .logout-btn {
@@ -71,6 +125,8 @@ table td {
 
 .groupmain-display {
 	width: 70%;
+	position: relative;
+	height: 86vh;
 }
 
 .group-info {
@@ -96,9 +152,12 @@ table td {
 #draw-control {
 	width: 30%;
 	padding: 0.5rem 1rem;
+	height: 86vh;
+	overflow: hidden;
 }
 
 #new-draw {
+	display: none;
 	width: 100%;
 	height: 6rem;
 	background-color: #ffc300;
@@ -131,10 +190,18 @@ table td {
 	border-radius: 0.25rem;
 }
 
+#add-drawbtn {
+	width: 100%;
+	height: 2rem;
+	background-color: #ffc300;
+	font-weight: 600;
+}
+
 #draw-history {
 	width: 100%;
-	max-height: 80vh;
-	margin-top: 1rem;
+	max-height: 76.5vh;
+	margin-top: 0.5rem;
+	overflow: hidden;
 }
 
 #draw-history h4 {
@@ -146,13 +213,13 @@ table td {
 	padding: 0.5rem;
 }
 
-#grouptab-A {
+/*#grouptab-A {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
 	width: 100%;
 	padding-right: 0.5rem;
-}
+}*/
 
 .grouptab a {
 	width: 50%;
@@ -179,6 +246,18 @@ table td {
 	background-color: burlywood;
 }
 
+.grouptab {
+	display: none;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	width: 100%;
+	padding-right: 0.5rem;
+}
+
+.grouptab.group0 {
+	display: flex;
+}
+
 #group-metadata {
 	width: 30%;
 	height: 90vh;
@@ -193,28 +272,24 @@ table td {
 #group-metadata h1 {
 	text-transform: uppercase;
 	text-align: center;
-	margin-bottom: 2rem;
+	margin-bottom: 1rem;
 }
 
 .close-btn {
-	width: 12rem;
+	width: 16rem;
 	height: 2rem;
 	font-weight: 600;
 	background-color: #00ff00;
-	margin-left: 8rem;
+	margin-left: 4rem;
 	padding: 0.5rem 4rem;
 }
 
-#group-display {
-	width: 70%;
+.group-main {
+	width: 65%;
 	height: 90vh;
-	margin: 1rem;
-	border: 1px solid #000000;
-	padding: 0.5rem;
-	justify-content: center;
 }
 
-#group-display button {
+.group-controls button {
 	width: 9.5rem;
 	height: 2rem;
 	margin: 0 2rem;
@@ -222,11 +297,264 @@ table td {
 	background-color: #00ff00;
 }
 
+#group-display {
+	width: 100%;
+	height: 80vh;
+	margin: 1rem;
+	border: 1rem solid #ffc300;
+}
+
+#group-display h2 {
+	width: 100%;
+	height: 3rem;
+	margin: 0;
+	text-align: center;
+	font-size: 2rem;
+	background-color: #ffc300;
+}
+
 #group-datatable {
 	width: 100%;
-	height: 83vh;
+	height: 70vh;
 }
 
 #grouptab-B {
 	display: none;
+}
+
+.group-m-control {
+	position: absolute;
+	bottom: 0;
+	right: 2rem;
+}
+
+.group-m-control button {
+	width: 6rem;
+	height: 2rem;
+	margin-left: 1rem;
+}
+
+.group-m-control input {
+	width: 5rem;
+	height: 2rem;
+	margin-left: 1rem;
+	margin-right: -1rem;
+	padding: 0.5rem;
+	text-align: center;
+}
+
+#backward-btn {
+	background-color: #ff0000;
+}
+
+#forward-btn {
+	background-color: #00ff00;
+}
+
+#loader-wrapper {
+	display: none;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+	padding: 12rem 40rem;
+	background-color: #c2bdbd;
+	opacity: 0.7;
+}
+
+#loader {
+	position: relative;
+	display: none;
+	border: 16px solid #f3f3f3;
+	border-radius: 50%;
+	border-top: 16px solid blue;
+	border-right: 16px solid green;
+	border-bottom: 16px solid red;
+	border-left: 16px solid pink;
+	width: 120px;
+	height: 120px;
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+	z-index: 1001;
+}
+
+@-webkit-keyframes spin {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.display-numbers {
+	display: flex;
+	justify-content: space-between;
+}
+
+.show-ball {
+	background-color: #000000;
+	color: #ffffff;
+	width: 1.2rem;
+	height: 1.2rem;
+	text-align: center;
+	border-radius: 50%;
+	padding-top: 0.15rem;
+	font-size: 0.75rem;
+}
+
+.play-groups {
+	padding: 1rem;
+}
+
+.play-group {
+	display: flex;
+	justify-content: space-between;
+	margin: 0.2rem 0.5rem 0.2rem 0.5rem;
+}
+
+.play-number {
+	width: 1.75rem;
+	height: 1.75rem;
+	font-weight: 600;
+	font-size: 0.75rem;
+	text-align: center;
+	background-color: #ffc300;
+	border-radius: 50%;
+	padding: 0.4rem;
+}
+
+.playgroup-title {
+	width: 1.75rem;
+	height: 1.75rem;
+	background-color: #000000;
+	color: #ffffff;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-align: center;
+	padding: 0.4rem;
+	border-radius: 0.4rem;
+	margin-right: 0.5rem;
+	cursor: pointer;
+}
+
+.playgroup-title:hover {
+	background-color: #532ddd;
+}
+
+#group-select {
+	display: flex;
+	width: 100%;
+	height: 3.5rem;
+	justify-content: center;
+	margin: 0.5rem;
+}
+
+.group-pred-score {
+	width: 2rem;
+	height: 1.75rem;
+	background-color: #00ee00;
+	font-size: 0.75rem;
+	font-weight: 500;
+	text-align: center;
+	padding: 0.4rem 0;
+	border-radius: 0.4rem;
+	margin-left: 0.5rem;
+}
+
+.group-win-score {
+	width: 2rem;
+	height: 1.75rem;
+	background-color: #dae90e;
+	font-size: 0.75rem;
+	font-weight: 500;
+	text-align: center;
+	padding: 0.25rem 0;
+	border-radius: 0.4rem;
+	margin-left: 0.5rem;
+}
+
+.message-bar {
+	width: 100%;
+	height: 2rem;
+	color: #ff0000;
+	font-size: 1.5rem;
+	font-weight: 600;
+	text-align: center;
+	margin: 0 1rem 1rem 1rem;
+	padding-top: 0.5rem;
+}
+
+.play-wheel-group {
+	width: 2.5rem;
+	height: 2.5rem;
+	background-color: #00ee00;
+	margin: 0.5rem;
+	text-align: center;
+	font-size: 1.2rem;
+	font-weight: 600;
+	padding-top: 0.7rem;
+	border-radius: 50%;
+}
+
+.show-title {
+	width: 2.5rem;
+	height: 2.5rem;
+	background-color: #00ee00;
+	color: #ffffff;
+	margin: 0.5rem 1rem;
+	text-align: center;
+	font-size: 1.2rem;
+	font-weight: 600;
+	padding-top: 0.7rem;
+	border-radius: 0.4rem;
+}
+
+#group-wheel {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	width: 100%;
+	margin: 1rem;
+	max-height: 60vh;
+}
+
+.number-block {
+	display: flex;
+	margin: 0.25rem 0;
+}
+
+.number-pick {
+	width: 1.75rem;
+	height: 1.75rem;
+	margin: 0 0.25rem;
+	background-color: #000000;
+	color: #ffffff;
+	border-radius: 50%;
+	text-align: center;
+	font-size: 0.75rem;
+	font-weight: 500;
+	padding-top: 0.45rem;
+}
+
+.number-check {
+	width: 1.75rem;
+	height: 1.75rem;
+	border: 1px solid #000000;
+	border-radius: 0.4rem;
+	margin: 0 0.25rem;
+}
+
+.control-buttons {
+	display: flex;
+	justify-content: center;
 }
