@@ -1,0 +1,65 @@
+.misen-header {
+  grid-area: header-center;
+}
+
+.header-wrapper {
+  display: grid;
+  grid-template-columns: 6% 28% 50% 13%;
+  column-gap: 0.5rem;
+  align-items: center;
+  padding: 1rem;
+}
+
+.app-burger-menu {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.7);
+}
+
+.app-burger-menu img {
+  width: 2.5rem;
+  transition: 0.3s;
+}
+
+/* .menu-overlay {
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  background-color: rgba(49, 49, 49, 0.8);
+  cursor: pointer;
+  pointer-events: none;
+  transition: 0.5s ease-in-out;
+}
+
+.menu-container {
+  position: absolute;
+  top: 25%;
+  left: 22%;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  margin: 4rem auto;
+  pointer-events: visible;
+  min-width: 12rem;
+  min-height: 24rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  transition: 0.5s ease-in-out;
+} */
+
+.misen-brand {
+  font-family: CaviarDreamsBold;
+  font-weight: 600;
+}
+
+.misen-access {
+  text-align: right;
+}
+
+.misen-flag {
+  text-align: center;
+}

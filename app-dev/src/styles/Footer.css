@@ -1,0 +1,12 @@
+.app-footer {
+  grid-area: footer-center;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1rem;
+}
