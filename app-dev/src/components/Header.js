@@ -1,14 +1,10 @@
 import { NavLink } from "react-router-dom";
 import "../styles/Header.css";
-import burgerO from "../images/burger-c.png";
-import burgerC from "../images/burger-o.png";
-import useMisen from "../context/MisenContext";
 
 const Header = () => {
   return (
     <section className="misen-header">
       <div className="header-wrapper">
-        <BurgerMenu />
         <Brand />
         <Flag />
         <UserAccess />
@@ -19,18 +15,18 @@ const Header = () => {
 
 export default Header;
 
-const BurgerMenu = () => {
-  const { isBurgerOpen, burgerMenu } = useMisen();
-  return (
-    <div className="app-burger-menu" onClick={() => burgerMenu()}>
-      {!isBurgerOpen ? (
-        <img src={burgerO} alt="burger" />
-      ) : (
-        <img src={burgerC} alt="burger" />
-      )}
-    </div>
-  );
-};
+// const BurgerMenu = () => {
+//   const { isBurgerOpen, burgerMenu } = useMisen();
+//   return (
+//     <div className="app-burger-menu" onClick={() => burgerMenu()}>
+//       {!isBurgerOpen ? (
+//         <img src={burgerO} alt="burger" />
+//       ) : (
+//         <img src={burgerC} alt="burger" />
+//       )}
+//     </div>
+//   );
+// };
 
 const Brand = () => {
   return (
