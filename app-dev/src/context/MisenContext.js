@@ -6,6 +6,23 @@ const MisenContext = createContext(initState);
 export const MisenProvider = ({ children }) => {
   const [state, dispatch] = useReducer(misenReducer, initState);
 
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const fullMonths = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   const burgerMenu = () => {
     if (!state.isBurgerOpen) {
       dispatch({
@@ -45,6 +62,8 @@ export const MisenProvider = ({ children }) => {
     isBurgerOpen: state.isBurgerOpen,
     isNewGameEntry: state.isNewGameEntry,
     games: state.games,
+    weekDays,
+    fullMonths,
     burgerMenu,
     newGameForm,
     addNewGame,

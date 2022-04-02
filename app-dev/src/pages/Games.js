@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useMisen from "../context/MisenContext";
 import "../styles/Games.css";
 
@@ -18,30 +18,10 @@ const Games = () => {
 
 export default Games;
 
-// const GamesMenu = () => {
-//   const { isBurgerOpen, burgerMenu, newGameForm } = useMisen();
-
-//   return (
-//     <div className={`menu-overlay ${!isBurgerOpen ? "" : "overlay-active"}`}>
-//       <div className={`menu-container ${!isBurgerOpen ? "" : "menu-active"}`}>
-//         <h2>Games Menu</h2>
-//         <div
-//           onClick={() => {
-//             burgerMenu();
-//             newGameForm();
-//           }}
-//         >
-//           Create New Game...
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
 const GamesTableHeader = () => {
   const { newGameForm } = useMisen();
   const tableHeader = [
-    { title: "Game No", attrib: "" },
+    { title: "Game No.", attrib: "" },
     { title: "Draw Date", attrib: "" },
     { title: "Game Stage", attrib: "" },
     { title: "Draw Results", attrib: "" },
@@ -63,16 +43,28 @@ const GamesTableHeader = () => {
 };
 
 const GamesTableBody = () => {
-  const { games } = useMisen();
+  const { games, weekDays, fullMonths } = useMisen();
+
+  const formatDate = (date) => {
+    const weekDay = weekDays[new Date(date).getDay()];
+    const monthDate =
+      new Date(date).getDate().toString().length === 1
+        ? "0" + new Date(date).getDate()
+        : new Date(date).getDate();
+    const month = fullMonths[new Date(date).getMonth()];
+    const year = new Date(date).getFullYear();
+
+    return weekDay + ", " + monthDate + " " + month + " " + year;
+  };
 
   return (
     <div className="table-body-container">
       {games.map((game, i) => {
         return (
           <div key={i} className="table-data-container">
-            <div>...</div>
+            <button>...</button>
             <div> {game.gameNo} </div>
-            <div> {game.drawDate} </div>
+            <div>{formatDate(game.drawDate)}</div>
             <div>Initial</div>
           </div>
         );
@@ -100,6 +92,14 @@ const NewGameForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    fetch("http://127.0.0.1:4040/games/new_game", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+
     addNewGame(formData);
     newGameForm();
   };

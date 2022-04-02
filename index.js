@@ -1,25 +1,27 @@
 const express = require("express");
-const exphbs = require("express-handlebars");
-const router = require("./routes/index");
-const path = require("path");
+const cors = require("cors");
+const mongoose = require("mongoose");
+
+const gameRouter = require("./routes/gameRouter");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "public")));
-app.engine("hbs", exphbs({ defaultLayout: "main", extname: "hbs" }));
-app.set("view engine", "hbs");
+const connectDB = async () => {
+  mongoose.connect("mongodb://127.0.0.1:27017/misen-trial", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  console.log("MongoDB connected...");
+};
+
+connectDB();
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/games", gameRouter);
 
-app.get("/", (req, res) => {
-	return res.render("login", {
-		title: "Misen Player | Login",
-		style: "./styles/login.css",
-		template: "login-template",
-	});
-});
-
-app.use("/", router);
 app.listen(4040, () => {
-	console.log("Express application server running on port 4040 (http://127.0.0.1:4040)");
+  console.log("Express application server running on port 4040 (http://127.0.0.1:4040)");
 });

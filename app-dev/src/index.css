@@ -24,12 +24,12 @@ section {
 
 main {
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-columns: 1fr 1fr 4fr 1fr;
   grid-template-rows: 100px auto 200px;
   grid-template-areas:
-    "header-left header-center header-right"
-    "body-left body-center body-right"
-    "footer-left footer-center footer-right";
+    "header-left side-menu header-center header-right"
+    "body-left side-menu body-center body-right"
+    "footer-left side-menu body-center footer-right";
   row-gap: 0.5rem;
   min-width: 100vw;
   min-height: 100vh;
