@@ -2,11 +2,15 @@ const mongoose = require("mongoose");
 
 const playSchema = mongoose.Schema(
   {
+    gameNo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Game",
+    },
     playNo: {
       type: String,
       required: true,
     },
-    playBalls: {
+    ballRanks: {
       type: Array,
     },
     winIndex: {

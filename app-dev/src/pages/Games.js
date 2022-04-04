@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useMisen from "../context/MisenContext";
 import "../styles/Games.css";
 

@@ -14,9 +14,15 @@ const gameSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
+    gamePlays: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Play",
+      },
+    ],
     drawResults: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "draw",
+      ref: "Draw",
     },
     isPlayed: {
       type: Boolean,
@@ -25,12 +31,12 @@ const gameSchema = new mongoose.Schema(
     winGroups: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "group",
+        ref: "Group",
       },
     ],
     gameFinance: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "budget",
+      ref: "Budget",
     },
   },
   { timestamps: true }
