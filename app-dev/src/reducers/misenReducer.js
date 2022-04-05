@@ -1,7 +1,9 @@
 export const initState = {
   isBurgerOpen: false,
   isNewGameEntry: false,
+  isDetails: false,
   games: [],
+  selectedGame: "",
 };
 
 const misenReducer = (state, action) => {
@@ -23,6 +25,18 @@ const misenReducer = (state, action) => {
       return {
         ...state,
         games: [payload, ...state.games],
+      };
+
+    case "SELECTED_GAME":
+      return {
+        ...state,
+        selectedGame: payload,
+      };
+
+    case "GAME_DETAILS_SCREEN":
+      return {
+        ...state,
+        isDetails: payload,
       };
 
     default:

@@ -1,3 +1,4 @@
+const { path } = require("express/lib/application");
 const Game = require("../model/Game");
 const Play = require("../model/Play");
 
@@ -93,17 +94,33 @@ const createNewPlay = async (req, res, next) => {
     if (--plays) {
       savePlays();
     } else {
-      await Game.findByIdAndUpdate(req.game._id, { $push: { gamePlays: playIds } });
+      await Game.findByIdAndUpdate(
+        req.game._id,
+        {
+          $push: { gamePlays: playIds },
+        },
+        { new: true }
+      );
     }
   };
 
   await savePlays();
-  const createdGame = await Game.findById(req.game._id).populate({
-    path: "gamePlays",
-    select: "playNo ballRanks",
-  });
 
-  res.json(createdGame);
+  const resObject = {
+    gameId: req.game._id,
+    gameNo: req.game.gameNo,
+    drawDate: req.game.drawDate,
+    gameStatus: req.game.gameStatus,
+  };
+
+  res.json(resObject);
 };
 
-module.exports = { createNewGame, createNewPlay };
+const getOneGame = async (req, res, next) => {
+  const game = await Game.findById({ _id: req.body.gameId }).populate({
+    path: "gamePlays",
+  });
+  res.json(game);
+};
+
+module.exports = { createNewGame, createNewPlay, getOneGame };

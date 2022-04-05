@@ -58,15 +58,39 @@ export const MisenProvider = ({ children }) => {
     });
   };
 
+  const selectedGame = (game) => {
+    dispatch({
+      type: "SELECTED_GAME",
+      payload: game,
+    });
+  };
+
+  const gameDetailsScreen = () => {
+    if (!state.isDetails) {
+      dispatch({
+        type: "GAME_DETAILS_SCREEN",
+        payload: true,
+      });
+    } else {
+      dispatch({
+        type: "GAME_DETAILS_SCREEN",
+        payload: false,
+      });
+    }
+  };
+
   const value = {
     isBurgerOpen: state.isBurgerOpen,
     isNewGameEntry: state.isNewGameEntry,
+    isDetails: state.isDetails,
     games: state.games,
     weekDays,
     fullMonths,
     burgerMenu,
     newGameForm,
     addNewGame,
+    selectedGame,
+    gameDetailsScreen,
   };
 
   return <MisenContext.Provider value={value}>{children}</MisenContext.Provider>;

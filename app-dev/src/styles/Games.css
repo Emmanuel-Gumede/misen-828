@@ -50,7 +50,8 @@
   cursor: pointer;
 }
 
-.game-form-overlay {
+.game-form-overlay, 
+.game-details-overlay {
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -61,7 +62,8 @@
   pointer-events: none;
 }
 
-.game-form-container {
+.game-form-container, 
+.game-details-container {
   position: absolute;
   top: 40%;
   left: 50%;

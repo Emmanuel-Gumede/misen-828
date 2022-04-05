@@ -3,7 +3,7 @@ import useMisen from "../context/MisenContext";
 import "../styles/Games.css";
 
 const Games = () => {
-  const { isNewGameEntry } = useMisen();
+  const { isNewGameEntry, isDetails } = useMisen();
 
   return (
     <section className="misen-display">
@@ -11,6 +11,7 @@ const Games = () => {
         <GamesTableHeader />
         <GamesTableBody />
         {!isNewGameEntry ? "" : <NewGameForm />}
+        {!isDetails ? "" : <GameDetails />}
       </div>
     </section>
   );
@@ -43,6 +44,7 @@ const GamesTableHeader = () => {
 };
 
 const GamesTableBody = () => {
+  const { selectedGame, gameDetailsScreen, isDetails } = useMisen();
   const { games, weekDays, fullMonths } = useMisen();
 
   const formatDate = (date) => {
@@ -57,15 +59,28 @@ const GamesTableBody = () => {
     return weekDay + ", " + monthDate + " " + month + " " + year;
   };
 
+  const gameDetails = (gameId) => {
+    console.log(isDetails);
+    fetch("http://127.0.0.1:4040/games/one_game", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameId: gameId }),
+    })
+      .then((response) => response.json())
+      .then((data) => selectedGame(data));
+
+    gameDetailsScreen();
+  };
+
   return (
     <div className="table-body-container">
-      {games.map((game, i) => {
+      {games.map((game) => {
         return (
-          <div key={i} className="table-data-container">
-            <button>...</button>
+          <div key={game.gameId} className="table-data-container">
+            <button onClick={() => gameDetails(game.gameId)}>...</button>
             <div> {game.gameNo} </div>
             <div>{formatDate(game.drawDate)}</div>
-            <div>Initial</div>
+            <div> {game.gameStatus} </div>
           </div>
         );
       })}
@@ -98,9 +113,7 @@ const NewGameForm = () => {
       body: JSON.stringify(formData),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
-
-    addNewGame(formData);
+      .then((data) => addNewGame(data));
     newGameForm();
   };
 
@@ -134,6 +147,29 @@ const NewGameForm = () => {
         <div className="game-form-exit">
           <span onClick={() => newGameForm()}>Cancel</span>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const GameDetails = () => {
+  const { gameDetailsScreen } = useMisen();
+
+  const hideGameDetails = () => {
+    gameDetailsScreen();
+  };
+
+  return (
+    <div className="game-details-overlay">
+      <div className="game-details-container">
+        <div>
+          <h2>UPDATE GAME</h2>
+          <button onClick={hideGameDetails}>X</button>
+        </div>
+        <form>
+          <label>GAME NO:</label>
+          <input type="text" disabled="true" />
+        </form>
       </div>
     </div>
   );
