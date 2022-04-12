@@ -13,6 +13,17 @@ const playSchema = mongoose.Schema(
     ballRanks: {
       type: Array,
     },
+    playGroups: [
+      {
+        groupId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Group",
+        },
+        groupNumbers: {
+          type: Array,
+        },
+      },
+    ],
     winIndex: {
       type: Array,
     },

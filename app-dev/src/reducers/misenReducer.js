@@ -3,7 +3,7 @@ export const initState = {
   isNewGameEntry: false,
   isDetails: false,
   games: [],
-  selectedGame: "",
+  updateGame: "",
 };
 
 const misenReducer = (state, action) => {
@@ -27,10 +27,16 @@ const misenReducer = (state, action) => {
         games: [payload, ...state.games],
       };
 
+    case "LOAD_GAMES":
+      return {
+        ...state,
+        games: payload,
+      };
+
     case "SELECTED_GAME":
       return {
         ...state,
-        selectedGame: payload,
+        updateGame: payload,
       };
 
     case "GAME_DETAILS_SCREEN":
@@ -38,6 +44,15 @@ const misenReducer = (state, action) => {
         ...state,
         isDetails: payload,
       };
+
+    case "GAME_DETAILS_UPDATE":
+      for (let i = 0; i < state.games.length; i++) {
+        if (state.games[i]._id === payload.drawGame) {
+          state.games[i].drawResults = [{ drawNumbers: payload.drawNumbers }];
+          return state;
+        }
+      }
+      return state;
 
     default:
       return state;

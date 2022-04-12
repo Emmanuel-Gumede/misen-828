@@ -1,6 +1,50 @@
-const { path } = require("express/lib/application");
 const Game = require("../model/Game");
 const Play = require("../model/Play");
+const Draw = require("../model/Draw");
+const Group = require("../model/Group");
+
+const playGroupInit = async (req, res, next) => {
+  const confirmGroups = await Group.find({}).exec();
+
+  const createGroups = () => {
+    const groupRange = () => {
+      let balls = [];
+      for (let i = 1; i < 53; i++) {
+        balls.push(i);
+      }
+      return balls;
+    };
+
+    const groups = [];
+
+    for (let i = 0; i < groupRange().length / 4 - 1; i++) {
+      let gSlice = 4;
+      let groupA = groupRange().slice(gSlice * i, gSlice * (i + 1));
+      for (let j = 0; j < groupRange().length / 4 - (i + 1); j++) {
+        let groupA1 = groupRange().slice(gSlice * (i + j + 1), gSlice * (i + j + 2));
+        groups.push(groupA.concat(groupA1));
+      }
+    }
+    return groups;
+  };
+
+  const createNewGroups = async (gameIdx) => {
+    for (let i = 0; i < gameIdx.length; i++) {
+      const newGroup = new Group({
+        groupName: i.toString().length === 1 ? "G00" + (i + 1) : "G0" + (i + 1),
+        groupIndex: gameIdx[i],
+      });
+      await newGroup.save();
+    }
+  };
+
+  if (confirmGroups.length > 0) {
+    next();
+  } else {
+    await createNewGroups(createGroups());
+    next();
+  }
+};
 
 const createNewGame = async (req, res, next) => {
   const newGame = new Game({
@@ -14,7 +58,18 @@ const createNewGame = async (req, res, next) => {
 };
 
 const createNewPlay = async (req, res, next) => {
-  const pastDrawNumbers = [4, 18, 27, 33, 39, 44, 11, 7, 18, 28, 30, 39, 47, 1];
+  const drawResults = await Draw.find({});
+  const pastDrawNumbers = () => {
+    let finalNumbers = [];
+
+    for (let i = 0; i < drawResults.length; i++) {
+      let numbers = finalNumbers;
+      finalNumbers = numbers.concat(drawResults[i].drawNumbers);
+    }
+
+    return finalNumbers;
+  };
+
   const playBalls = () => {
     let balls = [];
     for (let i = 1; i < 53; i++) {
@@ -54,11 +109,29 @@ const createNewPlay = async (req, res, next) => {
     return ballsSorted;
   };
 
+  // const createPlayGroups = async (ranks) => {
+  //   const groups = await Group.find({}).exec();
+  //   const playGroups = [];
+
+  //   for (let i = 0; i < groups.length; i++) {
+  //     let groupId = groups[i]._id;
+  //     let groupNumbers = [];
+  //     for (let j = 0; j < groups[i].groupIndex.length; j++) {
+  //       groupNumbers.push(ranks[groups[i].groupIndex[j] - 1]);
+  //     }
+  //     playGroups.push({
+  //       groupId: groupId,
+  //       groupNumbers: groupNumbers,
+  //     });
+  //   }
+  //   return playGroups;
+  // };
+
   const buildPlayers = async () => {
     const players = [];
 
-    for (let i = 0; i < pastDrawNumbers.length / 7 + 1; i++) {
-      let pastDraws = pastDrawNumbers.slice(0, i * 7);
+    for (let i = 0; i < pastDrawNumbers().length / 7 + 1; i++) {
+      let pastDraws = pastDrawNumbers().slice(0, i * 7);
       let matchedBalls = await sumBallWins(pastDraws, playBalls());
       let rankedBalls = await sortPlayBalls(matchedBalls);
       let playNo = () => {
@@ -73,7 +146,8 @@ const createNewPlay = async (req, res, next) => {
         ballRanks: rankedBalls,
         winIndex: [],
       });
-      players.push(newPlay);
+
+      players.push(await newPlay);
     }
     return players;
   };
@@ -111,6 +185,7 @@ const createNewPlay = async (req, res, next) => {
     gameNo: req.game.gameNo,
     drawDate: req.game.drawDate,
     gameStatus: req.game.gameStatus,
+    drawResults: [],
   };
 
   res.json(resObject);
@@ -123,4 +198,35 @@ const getOneGame = async (req, res, next) => {
   res.json(game);
 };
 
-module.exports = { createNewGame, createNewPlay, getOneGame };
+const addNewDraw = async (req, res, next) => {
+  const newDraw = new Draw({
+    drawGame: req.body.gameId,
+    drawNumbers: req.body.drawNumbers,
+  });
+
+  await newDraw.save();
+  await Game.findByIdAndUpdate(
+    req.body.gameId,
+    { $set: { drawResults: newDraw._id } },
+    { new: true }
+  );
+  res.json(newDraw);
+};
+
+const getAllGames = async (req, res, next) => {
+  const games = await Game.find({})
+    .populate({ path: "drawResults", select: "drawNumbers" })
+    .populate({ path: "gamePlays" });
+
+  games.reverse();
+  res.json(games);
+};
+
+module.exports = {
+  playGroupInit,
+  createNewGame,
+  createNewPlay,
+  getOneGame,
+  addNewDraw,
+  getAllGames,
+};

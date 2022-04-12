@@ -52,9 +52,14 @@ export const MisenProvider = ({ children }) => {
   };
 
   const addNewGame = (game) => {
+    const gameId = game.gameId;
+    const newGame = {
+      ...game,
+      _id: gameId,
+    };
     dispatch({
       type: "ADD_NEW_GAME",
-      payload: game,
+      payload: newGame,
     });
   };
 
@@ -79,11 +84,40 @@ export const MisenProvider = ({ children }) => {
     }
   };
 
+  const loadGames = (games) => {
+    dispatch({
+      type: "LOAD_GAMES",
+      payload: games,
+    });
+  };
+
+  const gameDetailsUpdate = (game) => {
+    const drawData = {
+      gameId: game._id,
+      drawNumbers: game.drawResults,
+    };
+
+    fetch("http://127.0.0.1:4040/games/new_draw", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(drawData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch({
+          type: "GAME_DETAILS_UPDATE",
+          payload: data,
+        });
+        gameDetailsScreen();
+      });
+  };
+
   const value = {
     isBurgerOpen: state.isBurgerOpen,
     isNewGameEntry: state.isNewGameEntry,
     isDetails: state.isDetails,
     games: state.games,
+    updateGame: state.updateGame,
     weekDays,
     fullMonths,
     burgerMenu,
@@ -91,6 +125,8 @@ export const MisenProvider = ({ children }) => {
     addNewGame,
     selectedGame,
     gameDetailsScreen,
+    gameDetailsUpdate,
+    loadGames,
   };
 
   return <MisenContext.Provider value={value}>{children}</MisenContext.Provider>;

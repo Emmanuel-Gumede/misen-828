@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useMisen from "../context/MisenContext";
 import "../styles/Games.css";
 
@@ -44,8 +44,8 @@ const GamesTableHeader = () => {
 };
 
 const GamesTableBody = () => {
-  const { selectedGame, gameDetailsScreen, isDetails } = useMisen();
-  const { games, weekDays, fullMonths } = useMisen();
+  const { selectedGame, gameDetailsScreen, games, weekDays, fullMonths, loadGames } =
+    useMisen();
 
   const formatDate = (date) => {
     const weekDay = weekDays[new Date(date).getDay()];
@@ -60,27 +60,47 @@ const GamesTableBody = () => {
   };
 
   const gameDetails = (gameId) => {
-    console.log(isDetails);
     fetch("http://127.0.0.1:4040/games/one_game", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ gameId: gameId }),
     })
       .then((response) => response.json())
-      .then((data) => selectedGame(data));
-
-    gameDetailsScreen();
+      .then((data) => {
+        selectedGame(data);
+        gameDetailsScreen();
+      });
   };
 
-  return (
+  useEffect(() => {
+    fetch("http://127.0.0.1:4040/games", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => loadGames(data));
+  }, []);
+
+  return games.length === 0 ? (
+    <div>
+      <h2>Loading games...</h2>
+    </div>
+  ) : (
     <div className="table-body-container">
       {games.map((game) => {
         return (
-          <div key={game.gameId} className="table-data-container">
-            <button onClick={() => gameDetails(game.gameId)}>...</button>
+          <div key={game._id} className="table-data-container">
+            <button onClick={() => gameDetails(game._id)}>...</button>
             <div> {game.gameNo} </div>
             <div>{formatDate(game.drawDate)}</div>
             <div> {game.gameStatus} </div>
+            <div className="data-draw-numbers">
+              {game.drawResults === undefined || game.drawResults.length === 0
+                ? ""
+                : game.drawResults[0].drawNumbers.map((result, i) => {
+                    return <div key={i}> {result} </div>;
+                  })}
+            </div>
           </div>
         );
       })}
@@ -113,7 +133,9 @@ const NewGameForm = () => {
       body: JSON.stringify(formData),
     })
       .then((response) => response.json())
-      .then((data) => addNewGame(data));
+      .then((data) => {
+        addNewGame(data);
+      });
     newGameForm();
   };
 
@@ -153,22 +175,94 @@ const NewGameForm = () => {
 };
 
 const GameDetails = () => {
-  const { gameDetailsScreen } = useMisen();
+  const { gameDetailsScreen, updateGame, gameDetailsUpdate } = useMisen();
+  const [gameFormData, setGameFormData] = useState(updateGame);
 
   const hideGameDetails = () => {
     gameDetailsScreen();
   };
 
-  return (
+  const handleFormInput = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setGameFormData({
+      ...gameFormData,
+      [name]: value,
+    });
+  };
+
+  const handleGameUpdate = (e) => {
+    e.preventDefault();
+    gameFormData.drawResults = gameFormData.drawResults.split(",").map(Number);
+    gameDetailsUpdate(gameFormData);
+  };
+
+  useEffect(() => {
+    setGameFormData(updateGame);
+  }, [updateGame]);
+
+  return gameFormData === "" ? (
+    <div>
+      <h2>Loading...</h2>
+    </div>
+  ) : (
     <div className="game-details-overlay">
       <div className="game-details-container">
-        <div>
+        <div className="game-details-title">
           <h2>UPDATE GAME</h2>
-          <button onClick={hideGameDetails}>X</button>
+          <button className="game-details-btn" onClick={hideGameDetails}>
+            X
+          </button>
         </div>
-        <form>
-          <label>GAME NO:</label>
-          <input type="text" disabled="true" />
+        <form onSubmit={handleGameUpdate}>
+          <div className="game-form-top">
+            <div>
+              <label htmlFor="gameNo">GAME NO:</label>
+              <input
+                type="text"
+                name="gameNo"
+                value={gameFormData.gameNo}
+                onChange={handleFormInput}
+                disabled={true}
+              />
+            </div>
+            <div>
+              <label htmlFor="drawDate">DRAW DATE:</label>
+              <input
+                type="date"
+                name="drawDate"
+                value={gameFormData.drawDate.split("T")[0]}
+                onChange={handleFormInput}
+                disabled={true}
+              />
+            </div>
+            <div>
+              <label htmlFor="gameStatus">GAME STATUS:</label>
+              <input
+                type="text"
+                name="gameStatus"
+                value={gameFormData.gameStatus}
+                onChange={handleFormInput}
+                disabled={true}
+              />
+            </div>
+          </div>
+          <div className="game-form-middle">
+            <div>
+              <label htmlFor="drawResults">DRAW RESULTS:</label>
+              <input
+                type="text"
+                name="drawResults"
+                value={gameFormData.drawResults}
+                onChange={handleFormInput}
+                autoComplete="off"
+              />
+            </div>
+          </div>
+          <div className="game-form-apply">
+            <button>APPLY UPDATE</button>
+          </div>
         </form>
       </div>
     </div>

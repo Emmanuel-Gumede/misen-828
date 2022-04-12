@@ -20,10 +20,12 @@ const gameSchema = new mongoose.Schema(
         ref: "Play",
       },
     ],
-    drawResults: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Draw",
-    },
+    drawResults: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Draw",
+      },
+    ],
     isPlayed: {
       type: Boolean,
       default: false,
