@@ -2,6 +2,7 @@ const Game = require("../model/Game");
 const Play = require("../model/Play");
 const Draw = require("../model/Draw");
 const Group = require("../model/Group");
+const Winner = require("../model/Winner");
 
 const playGroupInit = async (req, res, next) => {
   const confirmGroups = await Group.find({}).exec();
@@ -58,6 +59,7 @@ const createNewGame = async (req, res, next) => {
 };
 
 const createNewPlay = async (req, res, next) => {
+  await Play.deleteMany();
   const drawResults = await Draw.find({});
   const pastDrawNumbers = () => {
     let finalNumbers = [];
@@ -109,23 +111,33 @@ const createNewPlay = async (req, res, next) => {
     return ballsSorted;
   };
 
-  // const createPlayGroups = async (ranks) => {
-  //   const groups = await Group.find({}).exec();
-  //   const playGroups = [];
+  const resetGroupPlays = async () => {
+    const groups = await Group.find({}).exec();
+    for (let i = 0; i < groups.length; i++) {
+      await Group.findByIdAndUpdate(
+        groups[i]._id,
+        { $set: { groupPlays: [] } },
+        { multi: true }
+      );
+    }
+  };
 
-  //   for (let i = 0; i < groups.length; i++) {
-  //     let groupId = groups[i]._id;
-  //     let groupNumbers = [];
-  //     for (let j = 0; j < groups[i].groupIndex.length; j++) {
-  //       groupNumbers.push(ranks[groups[i].groupIndex[j] - 1]);
-  //     }
-  //     playGroups.push({
-  //       groupId: groupId,
-  //       groupNumbers: groupNumbers,
-  //     });
-  //   }
-  //   return playGroups;
-  // };
+  const createGroupPlays = async (play) => {
+    const groups = await Group.find({}).exec();
+
+    for (let i = 0; i < groups.length; i++) {
+      let groupPlay = [];
+      for (let j = 0; j < groups[i].groupIndex.length; j++) {
+        groupPlay.push(play.ballRanks[groups[i].groupIndex[j] - 1]);
+      }
+
+      await Group.findByIdAndUpdate(
+        groups[i]._id,
+        { $push: { groupPlays: [play.playNo, groupPlay] } },
+        { new: true }
+      );
+    }
+  };
 
   const buildPlayers = async () => {
     const players = [];
@@ -156,8 +168,11 @@ const createNewPlay = async (req, res, next) => {
   let plays = gamePlayers.length;
   let playIds = [];
 
+  await resetGroupPlays();
+
   const savePlays = async () => {
     let play = gamePlayers.pop();
+    await createGroupPlays(play);
     await play.save((err, saved) => {
       if (err) {
         console.log(err);
@@ -198,6 +213,35 @@ const getOneGame = async (req, res, next) => {
   res.json(game);
 };
 
+const countWinners = async (draw) => {
+  const playGroups = await Group.find({}).exec();
+
+  for (let i = 0; i < playGroups.length; i++) {
+    for (let j = 0; j < playGroups[i].groupPlays.length; j++) {
+      let countWins = 0;
+      for (let w = 0; w < draw.length; w++) {
+        if (playGroups[i].groupPlays[j][1].includes(draw[w])) {
+          countWins++;
+        }
+      }
+
+      if (countWins >= 3) {
+        await Winner.findOneAndUpdate(
+          { groupId: playGroups[i]._id, playNo: playGroups[i].groupPlays[j][0] },
+          { $push: { winScore: countWins } },
+          { new: true, upsert: true }
+        );
+      } else {
+        await Winner.findOneAndUpdate(
+          { groupId: playGroups[i]._id, playNo: playGroups[i].groupPlays[j][0] },
+          { $push: { winScore: 0 } },
+          { new: true, upsert: true }
+        );
+      }
+    }
+  }
+};
+
 const addNewDraw = async (req, res, next) => {
   const newDraw = new Draw({
     drawGame: req.body.gameId,
@@ -210,6 +254,7 @@ const addNewDraw = async (req, res, next) => {
     { $set: { drawResults: newDraw._id } },
     { new: true }
   );
+  await countWinners(req.body.drawNumbers);
   res.json(newDraw);
 };
 

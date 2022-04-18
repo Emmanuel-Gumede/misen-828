@@ -10,20 +10,9 @@ const groupSchema = new mongoose.Schema(
       type: Array,
       required: true,
     },
-    groupWins: [
-      {
-        game: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Game",
-        },
-        gamePlay: [
-          {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Play",
-          },
-        ],
-      },
-    ],
+    groupPlays: {
+      type: Array,
+    },
   },
   {
     timestamps: true,
