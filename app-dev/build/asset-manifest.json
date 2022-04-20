@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.097e91aa.css",
+    "main.js": "/static/js/main.f311a0c2.js",
+    "static/js/787.fc290a72.chunk.js": "/static/js/787.fc290a72.chunk.js",
+    "static/media/CaviarDreams.ttf": "/static/media/CaviarDreams.174b0a13f7e49c169450.ttf",
+    "static/media/CaviarDreams_Bold.ttf": "/static/media/CaviarDreams_Bold.1062ba91167e0c325786.ttf",
+    "index.html": "/index.html",
+    "main.097e91aa.css.map": "/static/css/main.097e91aa.css.map",
+    "main.f311a0c2.js.map": "/static/js/main.f311a0c2.js.map",
+    "787.fc290a72.chunk.js.map": "/static/js/787.fc290a72.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.097e91aa.css",
+    "static/js/main.f311a0c2.js"
+  ]
+}

@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "../styles/Header.css";
+import useMisen from "../context/MisenContext";
 
 const Header = () => {
   return (
@@ -43,13 +44,14 @@ const Brand = () => {
 };
 
 const Flag = () => {
+  const { games } = useMisen();
   return (
     <div className="misen-flag">
       <h3>Latest Results</h3>
-      <div>NUMBERS</div>
-      <div>
-        <span>Thursday</span>
-        <span>24 March 2022</span>
+      <div className="flag-draw-numbers">
+        {games[1]?.drawResults[0]?.drawNumbers.map((ball, i) => {
+          return <div key={i}> {ball} </div>;
+        })}
       </div>
     </div>
   );
